@@ -1,5 +1,5 @@
 {
-  "name": "@afranio/memory-client",
+  "name": "@afranioalves/memory-client",
   "version": "1.0.0",
   "description": "A simple memory management system using indexedDB files.",
   "main": "src/index.js",
