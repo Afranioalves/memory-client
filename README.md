@@ -18,9 +18,9 @@ Main features:
 Install via npm or yarn:
 
 ```bash
-npm install @afranio/memory-client
+npm install @afranioalves/memory-client
 # or
-yarn add @afranio/memory-client
+yarn add @afranioalves/memory-client
 ```
 
 > Note: The package uses ES modules (package.json has "type": "module").
@@ -30,7 +30,7 @@ yarn add @afranio/memory-client
 Import the default instance and call the async methods:
 
 ```javascript
-import Memory from '@afranio/memory-client';
+import Memory from '@afranioalves/memory-client';
 
 async function main() {
   // Create/update a memory
@@ -57,7 +57,7 @@ main();
   <head><meta charset="utf-8"><title>Memory Example</title></head>
   <body>
     <script type="module">
-      import Memory from '/node_modules/@afranio/memory-client/src/index.js';
+      import Memory from '/node_modules/@afranioalves/memory-client/src/index.js';
 
       (async () => {
         console.log(await Memory.create('ex1', 'Hello World'));
@@ -69,13 +69,13 @@ main();
 </html>
 ```
 
-> Note: When using bundlers or frameworks (Vite, Webpack, Next.js), prefer importing by package name: `import Memory from '@afranio/memory-client'`.
+> Note: When using bundlers or frameworks (Vite, Webpack, Next.js), prefer importing by package name: `import Memory from '@afranioalves/memory-client'`.
 
 ### React Example
 
 ```jsx
 import React from 'react';
-import Memory from '@afranio/memory-client';
+import Memory from '@afranioalves/memory-client';
 
 export default function App() {
   const createMemory = async () => {
