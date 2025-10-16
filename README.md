@@ -125,14 +125,31 @@ Example responses:
 - This library is intended for client-side (browser) use. Persistence behavior may vary slightly between environments/browsers.
 - In contexts with very strict privacy policies or special browser modes, storage may be limited or temporary.
 
-## Contributing
 
-This is a simple project. To contribute:
+## @afranioalves/memory-client vs localStorage
 
-1. Fork the repository.
-2. Create a branch for your feature: `git checkout -b feature/my-feature`.
-3. Make small, descriptive commits.
-4. Open a pull request explaining your change.
+| Feature                | @afranioalves/memory-client  | localStorage           |
+|------------------------|-----------------------------------------|------------------------|
+| Storage Limit          | Large (hundreds of MBs)                 | Small (~5MB per origin)|
+| Data Type Support      | Any JS type (objects, arrays, etc.)     | Only strings           |
+| Async API              | Yes (Promises)                          | No (synchronous)       |
+| Performance            | Fast for large/bulk data                | Fast for small data    |
+| Transactions          | Supported                               | Not supported          |
+| Browser Support        | All modern browsers                     | All browsers           |
+| Use Cases              | Complex, structured, or large data      | Simple key-value pairs |
+| API Complexity         | Simple via this library                 | Very simple            |
+| Persistence            | Persistent, survives browser restarts   | Persistent             |
+
+### When to use @afranioalves/memory-client
+- You need to store objects, arrays, or non-string data.
+- You expect to store more than a few megabytes.
+- You want async operations and better performance for large datasets.
+- You need transactional integrity.
+
+### When to use localStorage
+- You only need to store small amounts of string data.
+- You want a synchronous, simple API for quick tasks.
+- You do not need to store complex or large data.
 
 ## License
 
