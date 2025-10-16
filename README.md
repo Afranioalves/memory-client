@@ -140,4 +140,4 @@ MIT — see the `LICENSE` file
 
 ---
 
-Author: Afrânio
+Author: Afrânio Alves
