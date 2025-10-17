@@ -1,5 +1,9 @@
 
 class Memory {
+
+  private dbName: string;
+  private storeName: string
+  private dbPromise: Promise<IDBDatabase>;
     
   constructor() {
     this.dbName = 'memoryDB';
@@ -7,26 +11,26 @@ class Memory {
     this.dbPromise = this.initDB();
   }
 
-  async initDB() {
+  async initDB(): Promise<IDBDatabase> {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open(this.dbName, 1);
 
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
+      request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
+        const db = (event.target as IDBOpenDBRequest).result;
         if (!db.objectStoreNames.contains(this.storeName)) {
           db.createObjectStore(this.storeName, { keyPath: 'name' });
         }
       };
 
-      request.onsuccess = (event) => resolve(event.target.result);
-      request.onerror = (event) => reject(event.target.error);
+      request.onsuccess = (event: Event) => resolve((event.target as IDBOpenDBRequest).result);
+      request.onerror = (event: Event) => reject((event.target as IDBOpenDBRequest).error);
     });
   }
 
-  async create(memoryName, memoryValue) {
+  async create(memoryName: string, memoryValue: any): Promise<{ message: string; status: number }> {
     const db = await this.dbPromise;
     const existing = await this.read(memoryName);
-    if (existing && !existing.status) {
+    if (existing && typeof existing === 'object' && !('status' in existing)) {
       return { message: `Memory ${memoryName} already exists.`, status: 409 };
     }
 
@@ -40,7 +44,7 @@ class Memory {
     });
   }
 
-  async read(memoryName) {
+  async read(memoryName: string): Promise<any | { message: string; status: number }> {
     const db = await this.dbPromise;
     return new Promise((resolve) => {
       const tx = db.transaction(this.storeName, 'readonly');
@@ -56,10 +60,10 @@ class Memory {
     });
   }
 
-  async delete(memoryName) {
+  async delete(memoryName: string): Promise<{ message: string; status: number }> {
     const db = await this.dbPromise;
     const existing = await this.read(memoryName);
-    if (existing && existing.status === 404) {
+    if (existing && typeof existing === 'object' && 'status' in existing && existing.status === 404) {
       return { message: `Memory ${memoryName} does not exist.`, status: 404 };
     }
 
