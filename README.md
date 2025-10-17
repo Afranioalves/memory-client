@@ -2,7 +2,7 @@
 
 Lightweight library for client-side data storage. It offers a simple asynchronous API to create, read, and delete data by key.
 
-Version: 1.0.0
+Version: 1.0.3
 
 ## Description
 
@@ -103,7 +103,7 @@ export default function App() {
 All methods are asynchronous and return Promises.
 
 - `create(memoryName, memoryValue)`
-  - Description: Creates or updates an entry with key `memoryName` and value `memoryValue`.
+  - Description: Creates an entry with key `memoryName` and value `memoryValue`.
   - Returns: Promise resolving to an object `{ message: string, status: number }` on success, or rejects on error.
   - Example status codes: `201` (created successfully), `409` (already exists), `500` (internal error).
 
