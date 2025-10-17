@@ -1,4 +1,4 @@
-import { Column, TableSchema, ResponseMessage } from "./types/index";
+import { Column, TableSchema, ResponseMessage, IColumn } from "./types/index";
 
 class Database {
     private dbName: string;
@@ -30,7 +30,15 @@ class Database {
         });
     }
 
-    async createTable(tableName: string, keyPath: string = "id", autoIncrement: boolean = true, columns: Column[] = []): Promise<ResponseMessage> {
+
+    /**
+     * Creates a new table (objectStore)
+     * @param tableName Table name
+     * @param keyPath Name of the primary key field
+     * @param autoIncrement Automatically increments the key
+     * @param columns List of columns (indexes and settings)
+     */
+    async createTable(tableName: string, keyPath: string = "id", autoIncrement: boolean = true, columns: IColumn[] = []): Promise<ResponseMessage> {
         const db = await this.dbPromise;
         db.close();
 
@@ -45,8 +53,9 @@ class Database {
 
                     columns.forEach((col) => {
                         if (typeof col === "string") {
+                            // string column names don't have a 'unique' property, default to non-unique
                             store.createIndex(col, col, { unique: false });
-                        } else if (typeof col === "object" && col.name) {
+                        } else if (col && typeof col === "object" && col.name) {
                             store.createIndex(col.name, col.name, { unique: !!col.unique });
                         }
                     });
@@ -77,7 +86,7 @@ class Database {
         });
     }
 
-    async create(tableName: string, data: Record<string, any>): Promise<ResponseMessage> {
+    async insert(tableName: string, data: Record<string, any>): Promise<ResponseMessage> {
         const db = await this.dbPromise;
         const schema = this.schemas[tableName];
 
@@ -98,15 +107,15 @@ class Database {
             req.onsuccess = () =>
                 resolve({ message: "Record created successfully..", status: 201 });
             req.onerror = (event) =>
-                reject({ 
-                    message: "Failed to create the record", 
-                    status: 500, 
-                      error: (event.target as IDBRequest).error,
+                reject({
+                    message: "Failed to create the record",
+                    status: 500,
+                    error: (event.target as IDBRequest).error,
                 });
         });
     }
 
-    async selectOne<T = any>(tableName: string, index:string, value: IDBValidKey): Promise<T | ResponseMessage> {
+    async selectOne<T = any>(tableName: string, index: string, value: IDBValidKey): Promise<T | ResponseMessage> {
         const db = await this.dbPromise;
         return new Promise((resolve, reject) => {
             const tx = db.transaction(tableName, "readonly");
@@ -125,7 +134,7 @@ class Database {
 
     async update(
         tableName: string,
-        index:string,
+        index: string,
         value: IDBValidKey,
         newData: Record<string, any>
     ): Promise<ResponseMessage> {

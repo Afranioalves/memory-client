@@ -120,6 +120,91 @@ Example responses:
 - Successful creation: `{ message: 'Memory my-key created successfully.', status: 201 }`
 - Not found: `{ message: 'Memory my-key does not exist.', status: 404 }` (or the stored value when it exists)
 
+## Updates
+
+### Exciting New Features
+- **Database Class**: A powerful new addition for structured data storage, allowing for more complex data management.
+- **Table Management**: Easily create tables and define their structure with just a few lines of code.
+
+With the Database from memory-client, data manipulation becomes easier. The data will be stored in a structure similar to a table, making it easier to perform CRUD (create, read, update, delete) operations.
+
+| name               | email  | age         |
+|------------------------|-----------------------------------------|------------------------|
+| Hugo Jorge          | jorge@example.com                 | 30|
+| Afrânio Alves      | afranio.alves@gmail.com     | 18           |
+| Andrade Antunes              | antunes@gmail.com                          | 20 |
+
+### Enhanced Usage Example
+
+```javascript
+import Memory, { Database as database, type IColumn } from '@afranioalves/memory-client'
+
+const App = () => {
+
+  // Create a new table for users with an auto-incrementing ID
+
+  const createTable = async () => {
+    
+    const columns: IColumn[] = [
+        { name: 'nome', type: 'string', unique: false }, 
+        { name: 'email',  type: 'string', unique: true, }, 
+        { name: 'age', type: 'number', unique: false }
+      ]
+
+    // id is the primary key of this table.
+    const result = await database.createTable('users', 'id', true, columns)
+    console.log(result)
+  }
+
+ // Insert a new user into the table
+
+   const insertData = async () => {
+
+    const data = {
+      nome: "Hugo Jorge",
+      email: "jorge@exemplo.com",
+      age: 30,
+    }
+
+    const result = await database.insert("users", data);
+    console.log(result)
+  }
+
+ // find all data
+
+    const findAll = async () => {
+       const users = await database.selectAll('users')
+       console.log('users', users)
+    }
+
+    // find for a record
+
+      const findOne = async () => {
+        // email is the field where the search
+         const user = await database.selectOne('users', 'email', 'jorge@exemplo.com')
+         console.log(user)
+    }
+
+// updates a record
+
+    const updatedData = async () => {
+    const newValue = {email:'alfredo@gmail.com'}
+    const result = await database.update('users', 'email','jorge@exemplo.com', newValue)
+    console.log(result)
+  }
+
+
+      const deleteData = async () => {
+      const result = await database.delete('users', 1)
+      console.log(result)
+    }
+  
+}
+
+export default App;
+
+```
+
 ## Notes and Common Issues
 
 - This library is intended for client-side (browser) use. Persistence behavior may vary slightly between environments/browsers.

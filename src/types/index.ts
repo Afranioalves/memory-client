@@ -15,3 +15,9 @@ export interface ResponseMessage {
     error?: any;
     schema?: string[];
 }
+
+export interface IColumn {
+  name: string;
+  unique: boolean;
+  type: "string" | "number" | "boolean" | "object" | "array";
+}
