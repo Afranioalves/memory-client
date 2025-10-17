@@ -33,7 +33,7 @@ Import the default instance and call the async methods:
 import Memory from '@afranioalves/memory-client';
 
 async function main() {
-  // Create/update a memory
+  // Create a memory
   const createResult = await Memory.create('my-key', { name: 'Afrânio', age: 18 });
   console.log(createResult);
 
