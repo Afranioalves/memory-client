@@ -6,7 +6,7 @@ class Memory {
   private dbPromise: Promise<IDBDatabase>;
     
   constructor() {
-    this.dbName = 'memoryDB';
+    this.dbName = 'memoryClient';
     this.storeName = 'memories';
     this.dbPromise = this.initDB();
   }

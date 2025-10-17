@@ -1,6 +1,6 @@
 import { Column, TableSchema, ResponseMessage } from "./types/index";
 
-export default class Database {
+class Database {
     private dbName: string;
     private dbVersion: number;
     private dbPromise: Promise<IDBDatabase>;
@@ -61,7 +61,7 @@ export default class Database {
                 );
 
                 resolve({
-                    message: `Tabela ${tableName} criada com sucesso.`,
+                    message: `Table ${tableName} created successfully.`,
                     status: 201,
                     schema: this.schemas[tableName],
                 });
@@ -69,7 +69,7 @@ export default class Database {
 
             request.onerror = (event) => {
                 reject({
-                    message: `Erro ao criar tabela ${tableName}.`,
+                    message: `Error creating table ${tableName}.`,
                     status: 500,
                     error: (event.target as IDBOpenDBRequest).error,
                 });
@@ -96,38 +96,43 @@ export default class Database {
             const req = store.add(data);
 
             req.onsuccess = () =>
-                resolve({ message: "Registro criado com sucesso.", status: 201 });
-            req.onerror = () =>
-                reject({ message: "Erro ao criar registro.", status: 500 });
+                resolve({ message: "Record created successfully..", status: 201 });
+            req.onerror = (event) =>
+                reject({ 
+                    message: "Failed to create the record", 
+                    status: 500, 
+                      error: (event.target as IDBRequest).error,
+                });
         });
     }
 
-    async selectOne<T = any>(tableName: string, key: IDBValidKey): Promise<T | ResponseMessage> {
+    async selectOne<T = any>(tableName: string, index:string, value: IDBValidKey): Promise<T | ResponseMessage> {
         const db = await this.dbPromise;
         return new Promise((resolve, reject) => {
             const tx = db.transaction(tableName, "readonly");
             const store = tx.objectStore(tableName);
-            const req = store.get(key);
+            const req = store.index(index).get(value);
 
             req.onsuccess = () => {
                 if (req.result) resolve(req.result as T);
-                else resolve({ message: "Data not found.", status: 404 });
+                else resolve({ message: "Record not found.", status: 404 });
             };
 
             req.onerror = () =>
-                reject({ message: "E.", status: 500 });
+                reject({ message: "Error to find record", status: 500 });
         });
     }
 
     async update(
         tableName: string,
-        key: IDBValidKey,
+        index:string,
+        value: IDBValidKey,
         newData: Record<string, any>
     ): Promise<ResponseMessage> {
         const db = await this.dbPromise;
-        const existing = await this.selectOne(tableName, key);
+        const existing = await this.selectOne(tableName, index, value);
         if (!existing || (existing as ResponseMessage).status === 404)
-            return { message: "Data not found.", status: 404 };
+            return { message: "Record not found.", status: 404 };
 
         const updated = { ...(existing as Record<string, any>), ...newData };
 
@@ -143,15 +148,15 @@ export default class Database {
         });
     }
 
-    async delete(tableName: string, key: IDBValidKey): Promise<ResponseMessage> {
+    async delete(tableName: string, id: IDBValidKey): Promise<ResponseMessage> {
         const db = await this.dbPromise;
         return new Promise((resolve, reject) => {
             const tx = db.transaction(tableName, "readwrite");
             const store = tx.objectStore(tableName);
-            const req = store.delete(key);
+            const req = store.delete(id);
 
             req.onsuccess = () =>
-                resolve({ message: "data deleted .", status: 200 });
+                resolve({ message: "Record deleted sucessfully .", status: 200 });
             req.onerror = () =>
                 reject({ message: "Error to delete data", status: 500 });
         });
@@ -170,3 +175,5 @@ export default class Database {
         });
     }
 }
+
+export default new Database('memoryClientDatabase');
