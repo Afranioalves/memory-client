@@ -2,7 +2,7 @@
 
 Lightweight library for client-side data storage. It offers a simple asynchronous API to create, read, and delete data by key.
 
-Version: 1.0.3
+Version: 1.0.5
 
 ## Description
 
